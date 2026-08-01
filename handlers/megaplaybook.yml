@@ -1,0 +1,34 @@
+- hosts: appservers
+  tasks:
+    - name: install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: latest
+      become: yes
+    
+    - name: update index.html
+      ansible.builtin.copy:
+        src: files/index.html
+        dest: /usr/share/nginx/html/index.html
+      become: yes
+
+    - name: update nginx.conf
+      ansible.builtin.copy:
+        src: files/nginx.conf
+        dest: /etc/nginx/nginx.conf
+      notify:
+        - restart nginx
+        - message
+      become: yes
+
+  handlers:
+    - name: restart nginx
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded
+      become: yes
+    
+    - name: message
+      ansible.builtin.debug:
+        msg: "Both the Nginx config file and index.html were updated"
+

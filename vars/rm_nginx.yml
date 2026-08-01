@@ -1,0 +1,15 @@
+- hosts: webservers
+  tasks:
+    - name: remove nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: absent
+      notify:
+        - message
+      become: yes
+
+  handlers:
+    - name: message
+      ansible.builtin.debug:
+        msg: "Nginx was removed"
+

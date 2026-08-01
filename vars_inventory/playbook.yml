@@ -1,0 +1,35 @@
+- hosts: webservers
+  tasks:
+    - name: install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: latest
+      become: yes
+
+    - name: create root_dir
+      ansible.builtin.file:
+        path: "{{root_dir}}"
+        state: directory
+        mode: "755"
+      become: yes
+
+    - name: update nginx.conf
+      ansible.builtin.template:
+        src: templates/nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+      notify:
+        - reload nginx
+      become: yes
+
+    - name: update index.html
+      ansible.builtin.template:
+        src: templates/index.html.j2
+        dest: "{{root_dir}}/index.html"
+      become: yes
+
+  handlers:
+    - name: reload nginx
+      ansible.builtin.service:
+        name: nginx
+        state: reloaded
+      become: yes

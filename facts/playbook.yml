@@ -1,0 +1,12 @@
+- hosts: webservers
+  tasks:
+    - name: install git
+      ansible.builtin.apt:
+        name: git
+        state: latest
+      become: yes
+
+    - name: print facts
+      ansible.builtin.debug:
+        msg: "{{ansible_facts['os_family']}}"
+      become: yes
